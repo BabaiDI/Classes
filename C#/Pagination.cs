@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Task_1.Interface
 {
-    internal class Pagination<T> : List<T>
+    internal class Pagination<T>
     {
+        private List<T> list = new();
         private int pageIndex = 1;
         public int PageIndex
         {
@@ -34,37 +35,42 @@ namespace Task_1.Interface
 
         public void Update(List<T> list)
         {
-            Clear();
-            AddRange(list);
+            this.list = list;
         }
 
         public int GetTotalPageSize()
         {
-            return (int)Math.Ceiling((float)Count / PageSize);
+            return (int)Math.Ceiling((float)list.Count / PageSize);
         }
 
-        public List<T> GetNextPage()
+        public List<T> NextPage()
         {
             PageIndex++;
-            return GetPage(PageIndex);
+            return GetPage();
         }
 
-        public List<T> GetCurrentPage()
+        public List<T> CurrentPage()
         {
-            return GetPage(PageIndex);
+            return GetPage();
         }
 
-        public List<T> GetPreviousPage()
+        public List<T> PreviousPage()
         {
             PageIndex--;
-            return GetPage(PageIndex);
+            return GetPage();
         }
 
-        public List<T> GetPage(int pageIndex)
+        public List<T> GoToPage(int pageIndex)
         {
-            int start = (pageIndex - 1) * PageSize;
-            int end = Math.Min(Count - start, PageSize);
-            return GetRange(start, end);
+            PageIndex = pageIndex;
+            return GetPage();
+        }
+
+        private List<T> GetPage()
+        {
+            int start = (PageIndex - 1) * PageSize;
+            int count = Math.Min(list.Count - start, PageSize);
+            return list.GetRange(start, count);
         }
     }
 }
